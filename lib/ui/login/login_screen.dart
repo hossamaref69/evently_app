@@ -1,0 +1,154 @@
+import 'package:evently_app/core/constants/app_assets.dart';
+import 'package:evently_app/core/extensions/padding_ext.dart';
+import 'package:evently_app/core/extensions/size_ext.dart';
+import 'package:evently_app/core/routes/screens_route_name.dart';
+import 'package:evently_app/core/widgets/custom_text_form_field.dart';
+import 'package:flutter/material.dart';
+
+import '../../core/theme/app_colors.dart';
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.asset(
+            AppAssets.logo,
+            height: 0.21.height,
+          ),
+          const CustomTextFormField(
+            label: "Email",
+            icon: Icon(
+              Icons.email_rounded,
+              color: AppColors.grey,
+            ),
+          ).setOnlyPadding(
+            context,
+            top: 0.03,
+            down: 0.01,
+            right: 0.0,
+            left: 0.0,
+          ),
+          const CustomTextFormField(
+            label: "Password",
+            obscureText: true,
+            icon: Icon(
+              Icons.lock_rounded,
+              color: AppColors.grey,
+            ),
+          ).setOnlyPadding(
+            context,
+            top: 0.01,
+            down: 0.01,
+            right: 0.0,
+            left: 0.0,
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, ScreensRouteName.forgetPassword);
+              },
+              child: const Text(
+                "Forget Password ? ",
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                    color: AppColors.purpleColor, // Use your custom color
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                    decoration: TextDecoration.underline),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          TextButton(
+            onPressed: () {},
+            child: const Text("Login"),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, ScreensRouteName.register);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Don’t Have Account ? ",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  "Create Account",
+                  style: TextStyle(
+                      color: AppColors.purpleColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Intern"),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 130,
+                height: 2,
+                color: AppColors.purpleColor,
+              ),
+              const Text(
+                "Or",
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.purpleColor,
+                    fontSize: 16),
+              ),
+              Container(
+                width: 130,
+                height: 2,
+                color: AppColors.purpleColor,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          TextButton.icon(
+            onPressed: () {},
+            label: const Text(
+                "Login With Google",
+                style: TextStyle(
+                  color: AppColors.purpleColor,
+                  fontSize: 18,
+                ),
+          ),
+            style: TextButton.styleFrom(
+                backgroundColor: AppColors.whiteColor,
+                side: const BorderSide(width: 1.5, color: AppColors.purpleColor)
+            ),
+            icon: Image.asset(AppAssets.googleIcon, height: 0.03.height,),
+          )
+        ],
+      ).setHorizontalPadding(
+        context,
+        enableMediaQuery: true,
+        0.05,
+      ),
+    );
+  }
+}
