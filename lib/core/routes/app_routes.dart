@@ -1,5 +1,6 @@
 import 'package:evently_app/core/routes/screens_route_name.dart';
 import 'package:evently_app/ui/forget_password/forget_password_screen.dart';
+import 'package:evently_app/ui/home/home_screen.dart';
 import 'package:evently_app/ui/login/login_screen.dart';
 import 'package:evently_app/ui/register/register_screen.dart';
 import 'package:evently_app/ui/splash/splash_screen.dart';
@@ -29,6 +30,12 @@ class AppRoutes {
       case ScreensRouteName.forgetPassword:
         return MaterialPageRoute(
           builder: (context) => const ForgetPasswordScreen(),
+          settings: settings,
+        );
+
+      case ScreensRouteName.home:
+        return MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
           settings: settings,
         );
 
