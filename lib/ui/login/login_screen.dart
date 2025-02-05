@@ -4,7 +4,6 @@ import 'package:evently_app/core/extensions/size_ext.dart';
 import 'package:evently_app/core/routes/screens_route_name.dart';
 import 'package:evently_app/core/utlis/firebase_actions.dart';
 import 'package:evently_app/core/widgets/custom_text_form_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -19,7 +18,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   var emailController = TextEditingController();
-
   var passwordController = TextEditingController();
 
   @override
@@ -74,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.topRight,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, ScreensRouteName.forgetPassword);
+                      Navigator.pushNamed(
+                          context, ScreensRouteName.forgetPassword);
                     },
                     child: const Text(
                       "Forget Password ? ",
@@ -92,12 +91,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    if(_formKey.currentState!.validate()){
+                    if (_formKey.currentState!.validate()) {
                       FirebaseActions.login(
                         email: emailController.text,
                         password: passwordController.text,
-                      ).then((value){
-                        if(value){
+                      ).then((value) {
+                        if (value) {
                           Navigator.pushNamed(context, ScreensRouteName.home);
                         }
                       });
@@ -172,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   style: TextButton.styleFrom(
                       backgroundColor: AppColors.whiteColor,
-                      side: const BorderSide(width: 1.5, color: AppColors.purpleColor)
+                      side: const BorderSide(
+                          width: 1.5, color: AppColors.purpleColor)
                   ),
                   icon: Image.asset(AppAssets.googleIcon, height: 0.03.height,),
                 )
@@ -187,6 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   String? _emailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter an email address';
@@ -205,4 +206,5 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return null;
   }
+
 }
