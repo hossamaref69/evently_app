@@ -66,6 +66,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
+    - assets/images/event_images/
 
   fonts:
     - family: "Intern"
