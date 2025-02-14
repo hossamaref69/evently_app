@@ -1,4 +1,5 @@
 import 'package:evently_app/core/extensions/size_ext.dart';
+import 'package:evently_app/core/routes/screens_route_name.dart';
 import 'package:evently_app/core/theme/app_colors.dart';
 import 'package:evently_app/ui/home/tabs/home/home_tab.dart';
 import 'package:evently_app/ui/home/tabs/love/love_tab.dart';
@@ -25,16 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const LoveTab(),
     const ProfileTab(),
   ];
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: AppColors.purpleColor,
-        statusBarIconBrightness: Brightness.light,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: tabs[selectedIndex],
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, ScreensRouteName.createEvent);
+          },
           shape: const CircleBorder(
             side: BorderSide(color: Colors.white, width: 6)
           ),

@@ -1,10 +1,14 @@
 import 'package:evently_app/core/extensions/size_ext.dart';
 import 'package:evently_app/core/theme/app_colors.dart';
+import 'package:evently_app/firebase_helper/firestore/firestore_helper.dart';
+import 'package:evently_app/models/EventDM.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({super.key});
+  final EventDM eventDM;
+  const CategoryCard({super.key, required this.eventDM});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,7 @@ class CategoryCard extends StatelessWidget {
       height: 0.25.height,
       decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/event_images/book_club.png"),
+            image: AssetImage(eventDM.image),
           ),
           borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -27,9 +31,9 @@ class CategoryCard extends StatelessWidget {
               color: const Color(0xffF2FEFF),
             ),
             child: Text(
-              "21\nNov",
+              DateFormat("dd MMM").format(eventDM.date),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppColors.purpleColor,
@@ -43,25 +47,31 @@ class CategoryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               color: AppColors.whiteColor,
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    "Meeting for Updating The Development Method ",
+                    eventDM.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.blackColor,
                     ),
                   ),
                 ),
-                SizedBox(width: 2,),
-                Icon(
-                  Icons.favorite_border,
-                  color: AppColors.purpleColor,
+                const SizedBox(width: 2,),
+                GestureDetector(
+                  onTap:  () {
+                    eventDM.isFavorite = !eventDM.isFavorite;
+                    FirestoreHelper.updateEvent(eventDM);
+                  },
+                  child: Icon(
+                    eventDM.isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: AppColors.purpleColor,
+                  ),
                 )
               ],
             ),

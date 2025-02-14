@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class FirebaseActions {
+class AuthHelper {
   static Future<bool> login(
-      {required String email, required String password,}) async {
-    EasyLoading.show(status: "Loading...");
+      {required String email, required String password,}
+      ) async {
+
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,

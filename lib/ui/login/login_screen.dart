@@ -2,7 +2,7 @@ import 'package:evently_app/core/constants/app_assets.dart';
 import 'package:evently_app/core/extensions/padding_ext.dart';
 import 'package:evently_app/core/extensions/size_ext.dart';
 import 'package:evently_app/core/routes/screens_route_name.dart';
-import 'package:evently_app/core/utlis/firebase_actions.dart';
+import 'package:evently_app/firebase_helper/auth/auth_helper.dart';
 import 'package:evently_app/core/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
@@ -37,14 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   AppAssets.logo,
                   height: 0.21.height,
                 ),
-                CustomTextFormField(
+                CustomTextField(
                   controller: emailController,
                   label: "Email",
-                  icon: const Icon(
+                  prefixIcon: const Icon(
                     Icons.email_rounded,
                     color: AppColors.grey,
                   ),
-                  validator: _emailValidator,
+                  onValidate: _emailValidator,
                 ).setOnlyPadding(
                   context,
                   top: 0.03,
@@ -52,12 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   right: 0.0,
                   left: 0.0,
                 ),
-                CustomTextFormField(
+                CustomTextField(
                   controller: passwordController,
-                  validator: _passwordValidator,
+                  onValidate: _passwordValidator,
                   label: "Password",
-                  obscureText: true,
-                  icon: const Icon(
+                  maxLines: 1,
+                  isPassword: true,
+                  prefixIcon: const Icon(
                     Icons.lock_rounded,
                     color: AppColors.grey,
                   ),
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      FirebaseActions.login(
+                      AuthHelper.login(
                         email: emailController.text,
                         password: passwordController.text,
                       ).then((value) {
