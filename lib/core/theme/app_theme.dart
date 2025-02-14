@@ -16,7 +16,15 @@ abstract class AppTheme{
       ),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.whiteColor
+      backgroundColor: AppColors.whiteColor,
+      titleTextStyle: TextStyle(
+        color: AppColors.purpleColor,
+        fontWeight: FontWeight.w400,
+        fontSize: 16
+      ),
+      iconTheme: IconThemeData(
+        color: AppColors.purpleColor
+      )
     )
   );
 }

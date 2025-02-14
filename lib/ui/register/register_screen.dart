@@ -1,6 +1,6 @@
 import 'package:evently_app/core/extensions/padding_ext.dart';
 import 'package:evently_app/core/extensions/size_ext.dart';
-import 'package:evently_app/core/utlis/firebase_actions.dart';
+import 'package:evently_app/firebase_helper/auth/auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -9,7 +9,6 @@ import '../../core/theme/app_colors.dart';
 import '../../core/widgets/custom_text_form_field.dart';
 
 class RegisterScreen extends StatefulWidget {
-
   const RegisterScreen({super.key});
 
   @override
@@ -42,11 +41,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 AppAssets.logo,
                 height: 0.21.height,
               ),
-              CustomTextFormField(
+              CustomTextField(
                 label: "Name",
-                validator: _nameValidator,
+                onValidate: _nameValidator,
                 controller: _nameController,
-                icon: const Icon(
+                prefixIcon: const Icon(
                   Icons.person,
                   color: AppColors.grey,
                 ),
@@ -57,11 +56,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 right: 0.0,
                 left: 0.0,
               ),
-              CustomTextFormField(
+              CustomTextField(
                 label: "Email",
-                validator: _emailValidator,
+                onValidate: _emailValidator,
                 controller: _emailController,
-                icon: const Icon(
+                prefixIcon: const Icon(
                   Icons.email_rounded,
                   color: AppColors.grey,
                 ),
@@ -72,12 +71,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 right: 0.0,
                 left: 0.0,
               ),
-              CustomTextFormField(
+              CustomTextField(
                 label: "Password",
                 controller: _passwordController,
-                validator: _passwordValidator,
-                obscureText: true,
-                icon: const Icon(
+                onValidate: _passwordValidator,
+                maxLines: 1,
+                isPassword: true,
+                prefixIcon: const Icon(
                   Icons.lock,
                   color: AppColors.grey,
                 ),
@@ -88,11 +88,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 right: 0.0,
                 left: 0.0,
               ),
-              CustomTextFormField(
-                validator: _rePasswordValidator,
+              CustomTextField(
+                controller: _rePasswordController,
+                onValidate: _rePasswordValidator,
                 label: "Re-Password",
-                obscureText: true,
-                icon: const Icon(
+                maxLines: 1,
+                isPassword: true,
+                prefixIcon: const Icon(
                   Icons.lock_rounded,
                   color: AppColors.grey,
                 ),
@@ -103,24 +105,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 right: 0.0,
                 left: 0.0,
               ),
-              SizedBox(height: 0.01.height,),
+              SizedBox(
+                height: 0.01.height,
+              ),
               TextButton(
-                  onPressed: () async{
-                    if (_formKey.currentState!.validate()){
-                      FirebaseActions.register(
-                        email: _emailController.text,
-                        password: _passwordController.text
-                      ).then((value) {
-                          if(value){
-                            Navigator.pop(context);
-                          }
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      AuthHelper.register(
+                              email: _emailController.text,
+                              password: _passwordController.text)
+                          .then((value) {
+                        if (value) {
+                          Navigator.pop(context);
                         }
-                      );
+                      });
                     }
                   },
-                  child: const Text("Create Account")
+                  child: const Text("Create Account")),
+              SizedBox(
+                height: 0.02.height,
               ),
-              SizedBox(height: 0.02.height,),
               InkWell(
                 onTap: () {
                   Navigator.pop(context);
@@ -152,6 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
   String? _emailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter an email address';

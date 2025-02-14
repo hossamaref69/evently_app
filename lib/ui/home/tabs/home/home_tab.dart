@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evently_app/core/constants/event_categories.dart';
 import 'package:evently_app/core/extensions/size_ext.dart';
+import 'package:evently_app/firebase_helper/firestore/firestore_helper.dart';
+import 'package:evently_app/models/EventDM.dart';
+import 'package:evently_app/ui/create_event/tab_widget.dart';
 import 'package:evently_app/ui/home/tabs/home/widgets/category_card.dart';
-import 'package:evently_app/ui/home/tabs/home/widgets/tabar_item.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
 
@@ -15,10 +17,12 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  int selectedTap = 0;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: EventCategories.eventCategories.length,
       child: Column(
         children: [
           Container(
@@ -104,50 +108,96 @@ class _HomeTabState extends State<HomeTab> {
                     ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: TabBar(
                     isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    indicatorPadding: EdgeInsets.zero,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                     indicatorColor: Colors.transparent,
-                    dividerColor: Colors.transparent,
-                    tabs: [
-                      TabBarItem(
-                        title: "All",
-                        icon: Icons.home,
-                        isSelected: true,
-                      ),
-                      TabBarItem(
-                        title: "Home",
-                        icon: Icons.home,
-                        isSelected: false,
-                      ),
-                      TabBarItem(
-                        title: "Home",
-                        icon: Icons.home,
-                        isSelected: false,
-                      ),
-                      TabBarItem(
-                        title: "Home",
-                        icon: Icons.home,
-                        isSelected: true,
-                      ),
-                    ],
+                    onTap: (value) {
+                      setState(() {
+                        selectedTap = value;
+                      });
+                    },
+                    tabs: EventCategories.eventCategories.map(
+                      (element) {
+                        return TabWidget(
+                          isInHomeTab: true,
+                          eventCategory: element,
+                          isSelected: selectedTap ==
+                              EventCategories.eventCategories.indexOf(element),
+                        );
+                      },
+                    ).toList(),
                   ),
                 )
               ],
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              itemBuilder: (context, index) {
-                return CategoryCard();
-              },
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 16,);
-              },
-              itemCount: 10,
+            child: SingleChildScrollView(
+              child: StreamBuilder<QuerySnapshot<EventDM>>(
+                stream: FirestoreHelper.getEventsByCategory(
+                    EventCategories.eventCategories[selectedTap].eventCategoryName),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Column(
+                      children: [
+                        const Text(
+                          "Something went wrong",
+                        ),
+                        const SizedBox(),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.refresh_outlined,
+                            color: AppColors.purpleColor,
+                          ),
+                        )
+                      ],
+                    );
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.purpleColor,
+                      ),
+                    );
+                  }
+                  List<EventDM> eventDataList = snapshot.data!.docs.map(
+                    (element) {
+                      return element.data();
+                    },
+                  ).toList();
+              
+                  return eventDataList.isNotEmpty
+                      ? ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          itemBuilder: (context, index) => CategoryCard(
+                            eventDM: eventDataList[index],
+                          ),
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 10,
+                          ),
+                          itemCount: eventDataList.length,
+                        )
+                      : const Text(
+                          "No Event Created Yet..!",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.grey,
+                          ),
+                        );
+                },
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
