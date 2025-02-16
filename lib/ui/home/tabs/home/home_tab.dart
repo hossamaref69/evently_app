@@ -140,8 +140,8 @@ class _HomeTabState extends State<HomeTab> {
           Expanded(
             child: SingleChildScrollView(
               child: StreamBuilder<QuerySnapshot<EventDM>>(
-                stream: FirestoreHelper.getEventsByCategory(
-                    EventCategories.eventCategories[selectedTap].eventCategoryName),
+                stream: FirestoreHelper.getEventsByCategory(EventCategories
+                    .eventCategories[selectedTap].eventCategoryName),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Column(
@@ -167,33 +167,31 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     );
                   }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Text("No Event Created Yet..!",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ));
+                  }
                   List<EventDM> eventDataList = snapshot.data!.docs.map(
                     (element) {
                       return element.data();
                     },
                   ).toList();
-              
-                  return eventDataList.isNotEmpty
-                      ? ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          itemBuilder: (context, index) => CategoryCard(
-                            eventDM: eventDataList[index],
-                          ),
-                          separatorBuilder: (context, index) => const SizedBox(
-                            height: 10,
-                          ),
-                          itemCount: eventDataList.length,
-                        )
-                      : const Text(
-                          "No Event Created Yet..!",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.grey,
-                          ),
-                        );
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemBuilder: (context, index) => CategoryCard(
+                      eventDM: eventDataList[index],
+                    ),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 10,
+                    ),
+                    itemCount: eventDataList.length,
+                  );
                 },
               ),
             ),

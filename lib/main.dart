@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'core/routes/app_routes.dart';
+import 'core/service/local_stronge_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utlis/loading.dart';
 import 'firebase_options.dart';
@@ -14,6 +15,7 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await LocalStorageService.init();
   runApp(const MyApp());
   Loading.configLoading();
 }
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRoutes.onGeneratedRoute,
       navigatorKey: navigatorKey,
-      builder: EasyLoading.init() ,
+      builder: EasyLoading.init(),
     );
   }
 }

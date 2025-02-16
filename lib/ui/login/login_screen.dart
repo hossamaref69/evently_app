@@ -5,6 +5,7 @@ import 'package:evently_app/core/routes/screens_route_name.dart';
 import 'package:evently_app/firebase_helper/auth/auth_helper.dart';
 import 'package:evently_app/core/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../../core/theme/app_colors.dart';
 

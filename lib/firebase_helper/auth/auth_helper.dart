@@ -7,6 +7,7 @@ class AuthHelper {
       ) async {
 
     try {
+      EasyLoading.show(status: "Loading...");
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -21,7 +22,7 @@ class AuthHelper {
         EasyLoading.showError('Wrong password provided for that user');
         return Future.value(false);
       }
-      EasyLoading.showError(e.message!);
+      EasyLoading.showError(e.message?? 'Something went wrong');
       return Future.value(false);
     } catch (e) {
       EasyLoading.showError(e.toString());
