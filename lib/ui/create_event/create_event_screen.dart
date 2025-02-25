@@ -28,8 +28,29 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   TimeOfDay? selectedTime;
 
   @override
+  void initState() {
+    super.initState();
+
+    // Retrieve arguments when navigating to this screen
+    Future.delayed(Duration.zero, () {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is EventDM) {
+        // If an event is passed, populate the form
+        setState(() {
+          _titleController.text = args.title;
+          _descriptionController.text = args.description;
+          selectedDate = args.date;
+          selectedTap = EventCategories.eventCategories.indexWhere(
+                  (element) => element.eventCategoryName == args.category);
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var args = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -192,15 +213,28 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           category:
                           EventCategories.eventCategories[selectedTap].eventCategoryName,
                         );
-                        try{
-                          FirestoreHelper.addEvent(event);
-                          EasyLoading.showSuccess("Event added successfully");
+                        try {
+                          if (args is EventDM) {
+                            event = EventDM(
+                              id: args.id,
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              image: EventCategories.eventCategories[selectedTap].eventCategoryImg,
+                              date: selectedDate!,
+                              category: EventCategories.eventCategories[selectedTap].eventCategoryName,
+                            );
+                            FirestoreHelper.updateEvent(event);
+                            EasyLoading.showSuccess("Event updated successfully");
+                          } else {
+                            FirestoreHelper.addEvent(event);
+                            EasyLoading.showSuccess("Event added successfully");
+                          }
                           Navigator.pop(context);
-                        }catch(e){
-                          EasyLoading.showError("error");
+                        } catch (e) {
+                          EasyLoading.showError("Error occurred");
                         }
                       } else {
-                       EasyLoading.showInfo("you must select event date");
+                        EasyLoading.showInfo("You must select an event date");
                       }
                     }
                   },
@@ -217,7 +251,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Add Event",
+                        args is EventDM ? "Update Event" : "Add Event",
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

@@ -7,6 +7,7 @@ import 'package:evently_app/ui/create_event/tab_widget.dart';
 import 'package:evently_app/ui/home/tabs/home/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/service/local_stronge_service.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class HomeTab extends StatefulWidget {
@@ -40,10 +41,10 @@ class _HomeTabState extends State<HomeTab> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Welcome Back ✨",
                             style: TextStyle(
                               fontSize: 14,
@@ -52,14 +53,14 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                           ),
                           Text(
-                            "John Safwat",
-                            style: TextStyle(
+                            LocalStorageService.getUserName()?? "",
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                               color: AppColors.whiteColor,
                             ),
                           ),
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ImageIcon(
@@ -139,60 +140,63 @@ class _HomeTabState extends State<HomeTab> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: StreamBuilder<QuerySnapshot<EventDM>>(
-                stream: FirestoreHelper.getEventsByCategory(EventCategories
-                    .eventCategories[selectedTap].eventCategoryName),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Column(
-                      children: [
-                        const Text(
-                          "Something went wrong",
-                        ),
-                        const SizedBox(),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.refresh_outlined,
-                            color: AppColors.purpleColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: StreamBuilder<QuerySnapshot<EventDM>>(
+                  stream: FirestoreHelper.getEventsByCategory(EventCategories
+                      .eventCategories[selectedTap].eventCategoryName),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Column(
+                        children: [
+                          const Text(
+                            "Something went wrong",
                           ),
-                        )
-                      ],
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.purpleColor,
-                      ),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Text("No Event Created Yet..!",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ));
-                  }
-                  List<EventDM> eventDataList = snapshot.data!.docs.map(
-                    (element) {
-                      return element.data();
-                    },
-                  ).toList();
+                          const SizedBox(),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.refresh_outlined,
+                              color: AppColors.purpleColor,
+                            ),
+                          )
+                        ],
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.purpleColor,
+                        ),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Text("No Event Created Yet..!",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ));
+                    }
+                    List<EventDM> eventDataList = snapshot.data!.docs.map(
+                      (element) {
+                        return element.data();
+                      },
+                    ).toList();
 
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    itemBuilder: (context, index) => CategoryCard(
-                      eventDM: eventDataList[index],
-                    ),
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 10,
-                    ),
-                    itemCount: eventDataList.length,
-                  );
-                },
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      itemBuilder: (context, index) => CategoryCard(
+                        eventDM: eventDataList[index],
+                      ),
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 10,
+                      ),
+                      itemCount: eventDataList.length,
+                    );
+                  },
+                ),
               ),
             ),
           ),

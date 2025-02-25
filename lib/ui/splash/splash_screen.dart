@@ -26,6 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         isFirstTime ? ScreensRouteName.setupScreen : ScreensRouteName.login,
       );
+      if(LocalStorageService.getUserId() != null){
+        Navigator.pushReplacementNamed(
+          context,
+          ScreensRouteName.home,
+        );
+      }
     });
   }
   @override

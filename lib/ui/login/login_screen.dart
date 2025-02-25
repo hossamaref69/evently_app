@@ -27,7 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+          constraints:
+              BoxConstraints(minHeight: MediaQuery.of(context).size.height),
           child: Form(
             key: _formKey,
             child: Column(
@@ -99,6 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         password: passwordController.text,
                       ).then((value) {
                         if (value) {
+                          AuthHelper().cacheUserDataToLocalStorage();
+                          AuthHelper().displayUserData();
                           Navigator.pushNamed(context, ScreensRouteName.home);
                         }
                       });
@@ -163,7 +166,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 24,
                 ),
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    EasyLoading.show();
+                    AuthHelper.signInWithGoogle().then(
+                      (value) {
+                       try{
+                         AuthHelper().cacheUserDataToLocalStorage();
+                         AuthHelper().displayUserData();
+                         Navigator.pushNamed(context, ScreensRouteName.home);
+                       }catch(e){
+                         EasyLoading.showError(e.toString());
+                       }
+                      },
+                    );
+                  },
                   label: const Text(
                     "Login With Google",
                     style: TextStyle(
@@ -174,9 +190,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextButton.styleFrom(
                       backgroundColor: AppColors.whiteColor,
                       side: const BorderSide(
-                          width: 1.5, color: AppColors.purpleColor)
+                          width: 1.5, color: AppColors.purpleColor)),
+                  icon: Image.asset(
+                    AppAssets.googleIcon,
+                    height: 0.03.height,
                   ),
-                  icon: Image.asset(AppAssets.googleIcon, height: 0.03.height,),
                 )
               ],
             ).setHorizontalPadding(
@@ -208,5 +226,4 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return null;
   }
-
 }

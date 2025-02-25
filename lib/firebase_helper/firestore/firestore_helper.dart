@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evently_app/models/EventDM.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class FirestoreHelper {
@@ -42,15 +43,15 @@ class FirestoreHelper {
   }
 
   static Stream<QuerySnapshot<EventDM>> getEventsByCategory(
-      String categoryName) {
-    var collectionRef = getCollectionReference().where(
-      "category",
-      isEqualTo: categoryName,
-    );
+      String categoryName){
+    var user = FirebaseAuth.instance.currentUser;
+    var collectionRef = getCollectionReference()
+        .where("category", isEqualTo: categoryName,);
+
     return collectionRef.snapshots();
   }
 
-  Future<bool> deleteEvent(EventDM event) async {
+  static Future<bool> deleteEvent(EventDM event) async {
     try {
       var collectionRef = getCollectionReference();
       var docRef = collectionRef.doc(event.id);
@@ -67,9 +68,13 @@ class FirestoreHelper {
       var collectionRef = getCollectionReference();
       var docRef = collectionRef.doc(event.id);
 
-      docRef.update(
-        event.toFireStore(),
+      print("Data being sent to Firestore: ${event.toFireStore()}");
+      var dataToSend = event.toFireStore();
+      print("Data being sent to Firestore: $dataToSend");
+      await docRef.update(
+        dataToSend,
       );
+      print("Event updated successfully in Firestore.");
 
       return Future.value(true);
     } catch (error) {

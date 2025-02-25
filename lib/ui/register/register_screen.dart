@@ -112,6 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       AuthHelper.register(
+                          displayName: _nameController.text,
                               email: _emailController.text,
                               password: _passwordController.text)
                           .then((value) {
